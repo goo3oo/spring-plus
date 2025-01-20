@@ -1,9 +1,11 @@
 package org.example.expert.domain.user.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.config.security.enrtity.CustomUserDetails;
 import org.example.expert.domain.common.entity.Timestamped;
 import org.example.expert.domain.user.enums.UserRole;
 
@@ -11,6 +13,8 @@ import org.example.expert.domain.user.enums.UserRole;
 @Entity
 @NoArgsConstructor
 @Table(name = "users")
+@Builder
+@AllArgsConstructor
 public class User extends Timestamped {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +40,8 @@ public class User extends Timestamped {
         this.nickName = nickName;
     }
 
-    public static User fromAuthUser(AuthUser authUser) {
-        return new User(authUser.getId(), authUser.getEmail(), authUser.getUserRole(), authUser.getNickName());
+    public static User fromUserDetails(CustomUserDetails userDetails) {
+        return new User(userDetails.getId(), userDetails.getUsername(), userDetails.getUserRole(), userDetails.getNickName());
     }
 
     public void changePassword(String password) {
