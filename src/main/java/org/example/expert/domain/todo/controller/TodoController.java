@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.expert.config.security.enrtity.CustomUserDetails;
 import org.example.expert.domain.todo.dto.request.TodoGetRequest;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
+import org.example.expert.domain.todo.dto.request.TodoSearchRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponse;
 import org.example.expert.domain.todo.service.TodoService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +40,11 @@ public class TodoController {
     @GetMapping("/todos/{todoId}")
     public ResponseEntity<TodoResponse> getTodo(@PathVariable long todoId) {
         return ResponseEntity.ok(todoService.getTodo(todoId));
+    }
+
+    @GetMapping("/todos/search")
+    public ResponseEntity<Page<TodoSearchResponse>> searchTodos(
+            @ModelAttribute TodoSearchRequest todoSearchRequest) {
+        return ResponseEntity.ok(todoService.searchTodos(todoSearchRequest));
     }
 }
