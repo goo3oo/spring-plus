@@ -13,14 +13,10 @@ import org.example.expert.config.security.enrtity.CustomUserDetails;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -62,9 +58,6 @@ public class JwtFilter extends OncePerRequestFilter {
             UserRole role = UserRole.valueOf(claims.get("userRole", String.class));
             String nickName = claims.get("nickName", String.class);
 
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
-
             CustomUserDetails userDetails = new CustomUserDetails(
                     User.builder()
                             .id(userId)
@@ -78,7 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
-                            authorities
+                            userDetails.getAuthorities()
                     );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
