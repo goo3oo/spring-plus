@@ -1,6 +1,6 @@
 package org.example.expert.domain.todo.controller;
 
-import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.config.security.enrtity.CustomUserDetails;
 import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.service.TodoService;
@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TodoController.class)
-class TodoControllerTest {
+class   TodoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,8 +37,15 @@ class TodoControllerTest {
         // given
         long todoId = 1L;
         String title = "title";
-        AuthUser authUser = new AuthUser(1L, "email", UserRole.USER, "userNick");
-        User user = User.fromAuthUser(authUser);
+        CustomUserDetails userDetails = new CustomUserDetails(
+                User.builder()
+                        .id(1L)
+                        .email("user@email.com")
+                        .userRole(UserRole.USER)
+                        .nickName("nickName")
+                        .build()
+        );
+        User user = User.fromUserDetails(userDetails);
         UserResponse userResponse = new UserResponse(user.getId(), user.getEmail());
         TodoResponse response = new TodoResponse(
                 todoId,
@@ -47,6 +56,13 @@ class TodoControllerTest {
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
         when(todoService.getTodo(todoId)).thenReturn(response);
@@ -62,6 +78,22 @@ class TodoControllerTest {
     void todo_단건_조회_시_todo가_존재하지_않아_예외가_발생한다() throws Exception {
         // given
         long todoId = 1L;
+
+        CustomUserDetails userDetails = new CustomUserDetails(
+                User.builder()
+                        .id(1L)
+                        .email("user@email.com")
+                        .userRole(UserRole.USER)
+                        .nickName("nickName")
+                        .build()
+        );
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
         when(todoService.getTodo(todoId))
