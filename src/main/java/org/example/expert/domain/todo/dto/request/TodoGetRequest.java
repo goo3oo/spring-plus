@@ -17,6 +17,7 @@ public class TodoGetRequest {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    // NPE 방지를 위해 기본값 설정
     public Integer getPage() {
         return page != null ? page : 1;
     }
@@ -25,6 +26,7 @@ public class TodoGetRequest {
         return size != null ? size : 10;
     }
 
+    // LocalDate -> LocalDateTime
     public LocalDateTime getStartDate() {
         return startDate != null ? startDate.atStartOfDay() : null;
     }
