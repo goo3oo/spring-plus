@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.expert.config.security.jwt.JwtAccessDeniedHandler;
 import org.example.expert.config.security.jwt.JwtAuthenticationEntryPoint;
 
+import org.example.expert.config.security.jwt.JwtFilter;
+import org.example.expert.config.security.jwt.JwtUtil;
 import org.example.expert.domain.user.enums.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
